@@ -1,0 +1,7 @@
+[package]
+name = "concurrent-hashmap"
+version = "0.1.0"
+authors = ["Casey Robinson <casey@rampantmonkey.com>"]
+
+[dependencies]
+crossbeam = "0.2.9"
