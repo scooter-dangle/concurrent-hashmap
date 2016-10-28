@@ -31,9 +31,9 @@
 //!
 //! let lib: Library<String, i64> = Library::new();
 //! lib.insert("qwerty".into(), 12345);
-//! let val0 = lib.get(&"qwerty".into()).unwrap();
+//! let val0 = lib.get("qwerty").unwrap();
 //! lib.insert("asdfgh".into(), 67890);
-//! let val1 = lib.get(&"asdfgh".into()).unwrap();
+//! let val1 = lib.get("asdfgh").unwrap();
 //! assert_eq!(val0, 12345.into());
 //! assert_eq!(val1, 67890.into());
 //! ```
@@ -52,15 +52,15 @@
 //! use std::sync::Arc;
 //!
 //! let lib0: Arc<Library<String, i64>> = Library::new().into();
-//! let val0 = lib0.get(&"abc".into());
+//! let val0 = lib0.get("abc");
 //! assert_eq!(val0, None.into());
 //! let lib1 = lib0.clone();
 //! lib0.insert("abc".into(), 123);
-//! let val123 = lib1.get(&"abc".into());
-//! assert_eq!(val123, lib0.get(&"abc".into()));
+//! let val123 = lib1.get("abc");
+//! assert_eq!(val123, lib0.get("abc"));
 //! assert_eq!(val0, None.into());
 //! lib1.insert("abc".into(), 456);
-//! let val456 = lib1.get(&"abc".into());
+//! let val456 = lib1.get("abc");
 //! assert_eq!(val456, Some(456.into()));
 //! assert_eq!(val123, Some(123.into()));
 //! ```
@@ -141,7 +141,8 @@ impl<K, V> Library<K, V> where K: LibraryKey {
         self.internal_data.get()
     }
 
-    pub fn get(&self, key: &K) -> Option<Arc<V>> {
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<Arc<V>>
+    where K: Borrow<Q>, Q: ::std::hash::Hash + Eq {
         self.internal_data().get(key).map(|el| el.get())
     }
 
@@ -215,15 +216,15 @@ mod tests {
     #[test]
     fn old_value_replace_same_key() {
         let lib0: Arc<Library<String, i64>> = Library::new().into();
-        let val0 = lib0.get(&"abc".into());
+        let val0 = lib0.get("abc");
         assert_eq!(val0, None.into());
         let lib1 = lib0.clone();
         lib0.insert("abc".into(), 123);
-        let val123 = lib1.get(&"abc".into());
-        assert_eq!(val123, lib0.get(&"abc".into()));
+        let val123 = lib1.get("abc");
+        assert_eq!(val123, lib0.get("abc"));
         assert_eq!(val0, None.into());
         lib1.insert("abc".into(), 456);
-        let val456 = lib1.get(&"abc".into());
+        let val456 = lib1.get("abc");
         assert_eq!(val456, Some(456.into()));
         assert_eq!(val123, Some(123.into()));
     }
@@ -232,9 +233,9 @@ mod tests {
     fn old_value_insert_new_key() {
         let lib: Library<String, i64> = Library::new();
         lib.insert("qwerty".into(), 12345);
-        let val0 = lib.get(&"qwerty".into()).unwrap();
+        let val0 = lib.get("qwerty").unwrap();
         lib.insert("asdfgh".into(), 67890);
-        let val1 = lib.get(&"asdfgh".into()).unwrap();
+        let val1 = lib.get("asdfgh").unwrap();
         assert_eq!(val0, 12345.into());
         assert_eq!(val1, 67890.into());
     }
