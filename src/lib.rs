@@ -136,7 +136,6 @@ impl<K, V> Library<K, V> where K: LibraryKey {
         }
     }
 
-    #[inline]
     fn internal_data(&self) -> Arc<LibraryStore<K, V>> {
         self.internal_data.get()
     }
