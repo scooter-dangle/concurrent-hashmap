@@ -107,8 +107,8 @@ use crossbeam::sync::ArcCell;
 
 pub type LibraryStore<K, V> = HashMap<K, Arc<ArcCell<V>>>;
 
-pub trait LibraryKey: ::std::cmp::Eq + ::std::hash::Hash + ::std::clone::Clone {}
-impl<              K: ::std::cmp::Eq + ::std::hash::Hash + ::std::clone::Clone> LibraryKey for K {}
+pub trait LibraryKey: Eq + ::std::hash::Hash + Clone {}
+impl<              K: Eq + ::std::hash::Hash + Clone> LibraryKey for K {}
 
 pub struct Library<K, V> where K: LibraryKey {
     internal_data: ArcCell<LibraryStore<K, V>>,
